@@ -14,7 +14,7 @@ body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#e8e4d9;height:100v
 .brand{flex:1;}
 .brand h1{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:#f0e6c0;letter-spacing:.08em;}
 .brand p{font-size:11px;color:#6b6655;letter-spacing:.12em;text-transform:uppercase;margin-top:2px;}
-.status{display:flex;align-items:center;gap:6px;font-size:11px;color:#6b6655;}
+.status{display:flex;align-items:center;gap:6px;font-size:11px;color:#6b6655;letter-spacing:.06em;}
 .dot{width:6px;height:6px;border-radius:50%;background:#d4af37;animation:glow 2s ease-in-out infinite;}
 @keyframes glow{0%,100%{opacity:1;}50%{opacity:.3;}}
 .actions{display:flex;gap:8px;padding:14px 28px;background:#0d0d14;border-bottom:1px solid rgba(212,175,55,0.1);flex-wrap:wrap;}
@@ -61,7 +61,10 @@ textarea:focus{border-color:rgba(212,175,55,0.5);}
     <h1>Navigator AI</h1>
     <p>Autonomous task agent</p>
   </div>
-  <div class="status"><div class="dot"></div>Online</div>
+  <div class="status">
+    <div class="dot"></div>
+    Online
+  </div>
 </div>
 <div class="actions">
   <button class="act-btn" onclick="quickSend('Book me a flight from Chennai to Delhi next Friday, cheapest economy')">✈ Flight</button>
@@ -103,37 +106,37 @@ textarea:focus{border-color:rgba(212,175,55,0.5);}
 </div>
 <script>
 const history=[];let busy=false;
-const SYSTEM="You are Navigator AI, a premium autonomous task agent. When given a task: 1. Acknowledge confidently 2. Give numbered step-by-step plan 3. Specify exact websites/apps 4. List info needed from user 5. Mention eligibility checks 6. Always confirm before payment. Use real Indian websites: MakeMyTrip, IRCTC, Rapido, pmkisan.gov.in, DigiLocker.";
-function quickSend(t){document.getElementById("input").value=t;sendMessage();}
+const SYSTEM=`You are Navigator AI — a premium autonomous task agent that handles real-world digital tasks for users with precision and elegance. When a user gives you a task: 1. Acknowledge confidently 2. Give a numbered step-by-step action plan 3. Specify exact websites/apps for each step 4. List any info needed from the user 5. Mention eligibility checks where relevant 6. Always confirm before payment or irreversible action. Use real Indian websites: MakeMyTrip, IRCTC, Rapido, pmkisan.gov.in, DigiLocker etc.`;
+function quickSend(t){document.getElementById('input').value=t;sendMessage();}
 function addMsg(role,text){
-  const m=document.getElementById("messages");
-  const d=document.createElement("div");
-  d.className="msg "+role;
-  d.innerHTML='<div class="av '+role+'">'+(role==="ai"?"N":"U")+'</div><div class="bubble">'+text.replace(/\n/g,"<br>").replace(/\*\*(.*?)\*\*/g,"<b>$1</b>")+"</div>";
+  const m=document.getElementById('messages');
+  const d=document.createElement('div');
+  d.className='msg '+role;
+  d.innerHTML=`<div class="av ${role}">${role==='ai'?'N':'U'}</div><div class="bubble">${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')}</div>`;
   m.appendChild(d);m.scrollTop=m.scrollHeight;
 }
 function setTyping(on){
-  document.getElementById("typingRow").style.display=on?"block":"none";
-  document.getElementById("sendBtn").disabled=on;
+  document.getElementById('typingRow').style.display=on?'block':'none';
+  document.getElementById('sendBtn').disabled=on;
   busy=on;
-  document.getElementById("messages").scrollTop=9999;
+  document.getElementById('messages').scrollTop=9999;
 }
 async function sendMessage(){
-  const inp=document.getElementById("input");
+  const inp=document.getElementById('input');
   const text=inp.value.trim();
   if(!text||busy)return;
-  inp.value="";inp.style.height="auto";
-  addMsg("user",text);
-  history.push({role:"user",parts:[{text}]});
+  inp.value='';inp.style.height='auto';
+  addMsg('user',text);
+  history.push({role:'user',parts:[{text}]});
   setTyping(true);
   try{
-    const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({history,system:SYSTEM})});
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({history,system:SYSTEM})});
     const data=await r.json();
-    const reply=data.reply||"Unable to process that request.";
-    history.push({role:"model",parts:[{text:reply}]});
-    setTyping(false);addMsg("ai",reply);
+    const reply=data.reply||'Unable to process that request.';
+    history.push({role:'model',parts:[{text:reply}]});
+    setTyping(false);addMsg('ai',reply);
   }catch(e){
-    setTyping(false);addMsg("ai","Connection error. Please try again.");
+    setTyping(false);addMsg('ai','Connection error. Please try again.');
   }
 }
 </script>
